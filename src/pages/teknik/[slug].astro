@@ -1,6 +1,8 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
-import TechnicalLayout from '../../layouts/TechnicalLayout.astro';
+import TechnicalLayout from '@/layouts/TechnicalLayout.astro';
+import { SITE } from '@/config/site';
+import Breadcrumb from '@/components/Breadcrumb.astro';
 
 export async function getStaticPaths() {
   const technicalArticles = await getCollection('technical');
@@ -15,6 +17,62 @@ interface Props {
 }
 
 const { technical } = Astro.props;
+const { data } = technical;
+
+// Breadcrumb items
+const breadcrumbItems = [
+  { name: "Ana Sayfa", path: "/" },
+  { name: "Teknik Bilgiler", path: "/teknik" },
+  { name: data.title, path: `/teknik/${technical.slug}`, current: true }
+];
+
+// Sayfa SEO bilgileri
+const seoData = {
+  title: `${data.title} | Teknik Bilgiler`,
+  description: data.description,
+  keywords: `${data.title}, karbon fiber teknik bilgi, yapısal güçlendirme teknikleri, CFRP teknik detaylar`,
+  canonical: `${SITE.url}/teknik/${technical.slug}`,
+  ogImage: `${SITE.url}/images/og-image.jpg`
+};
+
+// Technical Article Schema
+const technicalSchema = {
+  "@context": "https://schema.org",
+  "@type": "TechnicalArticle",
+  "headline": data.title,
+  "description": data.description,
+  "author": {
+    "@type": "Organization",
+    "name": SITE.name,
+    "url": SITE.url
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": SITE.name,
+    "logo": {
+      "@type": "ImageObject",
+      "url": `${SITE.url}/images/logo.svg`
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": seoData.canonical
+  }
+};
 ---
 
-<TechnicalLayout technical={technical} /> 
+<TechnicalLayout 
+  technical={technical}
+  title={seoData.title}
+  description={seoData.description}
+  keywords={seoData.keywords}
+  canonical={seoData.canonical}
+  ogImage={seoData.ogImage}
+>
+  <div slot="breadcrumb">
+    <Breadcrumb items={breadcrumbItems} />
+  </div>
+  <div slot="schema">
+    <script type="application/ld+json" set:html={JSON.stringify(technicalSchema)} />
+  </div>
+</TechnicalLayout> 

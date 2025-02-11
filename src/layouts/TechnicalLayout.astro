@@ -1,44 +1,49 @@
 ---
-import Layout from './Layout.astro';
 import type { CollectionEntry } from 'astro:content';
+import Layout from './Layout.astro';
 
 interface Props {
   technical: CollectionEntry<'technical'>;
+  title: string;
+  description?: string;
+  keywords?: string;
+  canonical?: string;
+  ogImage?: string;
 }
 
-const { technical } = Astro.props;
+const { technical, title, description = technical.data.description, keywords, canonical, ogImage } = Astro.props;
 const { Content } = await technical.render();
-
-// SEO için schema
-const technicalSchema = {
-  "@context": "https://schema.org",
-  "@type": "TechnicalArticle",
-  "name": technical.data.title,
-  "description": technical.data.description,
-  "author": {
-    "@type": "Organization",
-    "name": "Karbon Güçlendirme"
-  }
-};
+const { data } = technical;
 ---
 
-<Layout title={technical.data.title} description={technical.data.description}>
-  <!-- Schema.org JSON-LD -->
-  <script type="application/ld+json" set:html={JSON.stringify(technicalSchema)} />
+<Layout
+  title={title}
+  description={description}
+  keywords={keywords}
+  canonical={canonical}
+  ogImage={ogImage}
+>
+  <!-- Schema Slot -->
+  <slot name="schema" />
 
   <!-- Hero Section -->
   <div class="bg-gray-50 border-b">
     <div class="container mx-auto px-4 py-16">
+      <!-- Breadcrumb -->
+      <div class="mb-8">
+        <slot name="breadcrumb" />
+      </div>
+
       <div class="max-w-3xl mx-auto">
         <div class="inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium bg-green-50 text-green-600 mb-6">
-          <span class="mr-2">{technical.data.icon}</span>
+          <span class="mr-2">{data.icon}</span>
           Teknik Bilgi
         </div>
         <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-          {technical.data.title}
+          {data.title}
         </h1>
         <p class="text-xl text-gray-600 mb-8">
-          {technical.data.description}
+          {data.description}
         </p>
       </div>
     </div>
@@ -54,11 +59,11 @@ const technicalSchema = {
         </article>
 
         <!-- İlgili Konular -->
-        {technical.data.relatedTopics && (
+        {data.relatedTopics && (
           <div class="mt-12 pt-12 border-t">
             <h2 class="text-2xl font-bold text-gray-900 mb-6">İlgili Konular</h2>
             <div class="grid md:grid-cols-2 gap-6">
-              {technical.data.relatedTopics.map((topic) => (
+              {data.relatedTopics.map((topic) => (
                 <a href={topic.link} class="group">
                   <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all">
                     <h3 class="text-lg font-semibold text-gray-900 group-hover:text-green-600 mb-2">
@@ -78,7 +83,7 @@ const technicalSchema = {
         <div class="bg-white p-8 rounded-xl border border-gray-100 shadow-sm">
           <h2 class="text-xl font-bold text-gray-900 mb-6">Önemli Bilgiler</h2>
           <div class="space-y-4">
-            {technical.data.keyPoints?.map((point) => (
+            {data.keyPoints?.map((point) => (
               <div class="flex items-start">
                 <svg class="w-5 h-5 text-green-500 mt-1 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>

@@ -1,35 +1,64 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
+import { SITE } from '../../config/site';
+import Breadcrumb from '../../components/Breadcrumb.astro';
 
 const technicalArticles = await getCollection('technical');
 
-// SEO için schema
+const breadcrumbItems = [
+  { name: "Ana Sayfa", path: "/" },
+  { name: "Teknik Bilgiler", path: "/teknik", current: true }
+];
+
+// Sayfa SEO bilgileri
+const seoData = {
+  title: "Teknik Bilgiler | Karbon Fiber Güçlendirme",
+  description: "Karbon fiber güçlendirme sistemleri hakkında detaylı teknik bilgiler, uygulama yöntemleri ve önemli hususlar. Uzman ekibimizden teknik destek alın.",
+  keywords: "karbon fiber teknik bilgi, yapısal güçlendirme teknikleri, CFRP teknik detaylar, güçlendirme hesaplamaları",
+  canonical: `${SITE.url}/teknik`,
+  ogImage: `${SITE.url}/images/og-image.jpg`
+};
+
+// Technical Articles Schema
 const technicalSchema = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  "name": "Teknik Bilgiler - Arc Karbon",
-  "description": "Karbon fiber güçlendirme sistemleri hakkında teknik bilgiler ve uygulama detayları",
-  "url": "https://arckarbon.com/teknik",
+  "headline": "Teknik Bilgiler",
+  "description": seoData.description,
+  "publisher": {
+    "@type": "Organization",
+    "name": SITE.name,
+    "logo": {
+      "@type": "ImageObject",
+      "url": `${SITE.url}/images/logo.svg`
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": seoData.canonical
+  },
   "hasPart": technicalArticles.map((article) => ({
     "@type": "TechnicalArticle",
-    "name": article.data.title,
+    "headline": article.data.title,
     "description": article.data.description,
-    "url": `https://arckarbon.com/teknik/${article.slug}`
+    "url": `${SITE.url}/teknik/${article.slug}`
   }))
 };
 ---
 
-<Layout 
-  title="Teknik Bilgiler - Arc Karbon" 
-  description="Karbon fiber güçlendirme sistemleri hakkında teknik bilgiler ve uygulama detayları"
->
+<Layout {...seoData}>
   <!-- Schema.org JSON-LD -->
   <script type="application/ld+json" set:html={JSON.stringify(technicalSchema)} />
 
   <!-- Hero Section -->
   <div class="bg-gray-50 border-b">
     <div class="container mx-auto px-4 py-16">
+      <!-- Breadcrumb -->
+      <div class="mb-8">
+        <Breadcrumb items={breadcrumbItems} />
+      </div>
+
       <div class="max-w-3xl mx-auto text-center">
         <h1 class="text-4xl font-bold text-gray-900 mb-6">
           Teknik Bilgiler
