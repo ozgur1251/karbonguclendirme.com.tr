@@ -1,0 +1,130 @@
+---
+import { NAVIGATION } from '../config/navigation';
+
+const { main: menuItems } = NAVIGATION.menu;
+---
+
+<div class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden" id="mobileMenu">
+  <div class="absolute right-0 top-0 h-full w-72 bg-white shadow-lg transform transition-transform duration-300 translate-x-full">
+    <div class="p-6">
+      <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-700" id="closeMobileMenu">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      
+      <nav class="mt-12">
+        <ul class="space-y-6">
+          {menuItems.map(item => (
+            <li>
+              {item.submenu ? (
+                <div class="relative" x-data="{ open: false }">
+                  <button 
+                    class="w-full flex items-center justify-between text-gray-600 hover:text-gray-900 py-2 text-lg font-medium"
+                    @click="open = !open"
+                  >
+                    <span>{item.name}</span>
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      class="h-5 w-5 transform transition-transform duration-200" 
+                      :class="{ 'rotate-180': open }"
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <ul 
+                    class="mt-4 space-y-4 pl-4 hidden"
+                    x-show="open"
+                    x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 transform -translate-y-2"
+                    x-transition:enter-end="opacity-100 transform translate-y-0"
+                  >
+                    {item.submenu.map(subitem => (
+                      <li>
+                        <a 
+                          href={subitem.path} 
+                          class="block text-gray-600 hover:text-gray-900 py-2 text-base"
+                        >
+                          {subitem.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                <a 
+                  href={item.path} 
+                  class="block text-gray-600 hover:text-gray-900 py-2 text-lg font-medium"
+                >
+                  {item.name}
+                </a>
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<script>
+  declare global {
+    interface Window {
+      openMobileMenu: () => void;
+    }
+  }
+
+  const mobileMenu = document.getElementById('mobileMenu');
+  const closeMobileMenu = document.getElementById('closeMobileMenu');
+  const mobileMenuContent = mobileMenu?.querySelector('div');
+
+  // Menüyü aç
+  window.openMobileMenu = () => {
+    if (mobileMenu && mobileMenuContent) {
+      document.body.style.overflow = 'hidden';
+      mobileMenu.classList.remove('hidden');
+      setTimeout(() => {
+        mobileMenuContent.classList.remove('translate-x-full');
+      }, 10);
+    }
+  };
+
+  // Menüyü kapat
+  const closeMobileMenuHandler = () => {
+    if (mobileMenu && mobileMenuContent) {
+      document.body.style.overflow = '';
+      mobileMenuContent.classList.add('translate-x-full');
+      setTimeout(() => {
+        mobileMenu.classList.add('hidden');
+      }, 300);
+    }
+  };
+
+  // Dışarı tıklandığında menüyü kapat
+  mobileMenu?.addEventListener('click', (e) => {
+    if (e.target === mobileMenu) {
+      closeMobileMenuHandler();
+    }
+  });
+
+  closeMobileMenu?.addEventListener('click', closeMobileMenuHandler);
+
+  // Alt menüleri aç/kapat
+  const submenuButtons = document.querySelectorAll('[x-data]');
+  submenuButtons.forEach(button => {
+    const submenu = button.querySelector('ul');
+    button.querySelector('button')?.addEventListener('click', () => {
+      const isOpen = submenu?.classList.contains('hidden');
+      if (isOpen) {
+        submenu?.classList.remove('hidden');
+        button.querySelector('svg')?.classList.add('rotate-180');
+      } else {
+        submenu?.classList.add('hidden');
+        button.querySelector('svg')?.classList.remove('rotate-180');
+      }
+    });
+  });
+</script> 

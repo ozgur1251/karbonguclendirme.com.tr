@@ -1,0 +1,71 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const projects = [
+  {
+    title: "İş Merkezi Güçlendirme",
+    location: "İstanbul",
+    description: "15 katlı iş merkezinin kolonlarının karbon fiber ile güçlendirilmesi",
+    image: "/images/projects/project1.jpg",
+    category: "Ticari"
+  },
+  {
+    title: "Köprü Rehabilitasyonu",
+    location: "Ankara",
+    description: "Tarihi köprünün yapısal güçlendirmesi ve restorasyonu",
+    image: "/images/projects/project2.jpg",
+    category: "Altyapı"
+  },
+  {
+    title: "Fabrika Zemini Güçlendirme",
+    location: "İzmir",
+    description: "Endüstriyel tesis zemininin karbon fiber ile güçlendirilmesi",
+    image: "/images/projects/project3.jpg",
+    category: "Endüstriyel"
+  }
+];
+---
+
+<Layout title="Referanslar - ARC Karbon Güçlendirme">
+  <div class="bg-gray-50 py-20">
+    <div class="container mx-auto px-4">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">Referans Projelerimiz</h1>
+        <div class="w-20 h-1.5 bg-green-500 mx-auto rounded-full mb-8"></div>
+        <p class="text-gray-600">Başarıyla tamamladığımız projelerden örnekler</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {projects.map(project => (
+          <article class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div class="relative h-64 overflow-hidden">
+              <img 
+                src={project.image} 
+                alt={project.title}
+                class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="absolute top-4 right-4">
+                <span class="bg-green-500 text-white px-4 py-1 rounded-full text-sm">
+                  {project.category}
+                </span>
+              </div>
+            </div>
+            <div class="p-6">
+              <h2 class="text-xl font-bold text-gray-900 mb-2">{project.title}</h2>
+              <p class="text-gray-500 text-sm mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {project.location}
+              </p>
+              <p class="text-gray-600">{project.description}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout> 

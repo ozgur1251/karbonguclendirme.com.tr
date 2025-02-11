@@ -1,0 +1,238 @@
+---
+import { HOMEPAGE } from '../config/content';
+const { slides } = HOMEPAGE.hero_slider;
+---
+
+<div class="relative w-full h-[500px] md:h-[600px] lg:h-[700px] overflow-hidden">
+  <!-- Slider -->
+  <div class="flex transition-transform duration-700 ease-in-out h-full" id="slider">
+    {slides.map((slide, index) => (
+      <div class="w-full h-full flex-shrink-0 relative">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <img 
+          src={slide.image} 
+          alt={slide.title} 
+          class="w-full h-full object-cover brightness-75"
+          loading={index === 0 ? "eager" : "lazy"}
+          decoding="async"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+          <div class="container mx-auto px-4 h-full flex items-center justify-center">
+            <div class="text-center max-w-4xl">
+              <h2 class="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4 md:mb-6 opacity-0 translate-y-8 animate-slideUp drop-shadow-lg" style={`animation-delay: ${index * 200}ms`}>
+                {slide.title}
+              </h2>
+              <p class="text-lg md:text-xl lg:text-2xl text-white opacity-0 translate-y-8 animate-slideUp drop-shadow-md" style={`animation-delay: ${index * 200 + 200}ms`}>
+                {slide.description}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- Navigation Buttons -->
+  <button 
+    class="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 text-white p-3 rounded-full transition-all transform hover:scale-110 focus:outline-none backdrop-blur-sm"
+    id="prevBtn"
+    aria-label="Önceki Slayt"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+    </svg>
+  </button>
+  <button 
+    class="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 text-white p-3 rounded-full transition-all transform hover:scale-110 focus:outline-none backdrop-blur-sm"
+    id="nextBtn"
+    aria-label="Sonraki Slayt"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+    </svg>
+  </button>
+
+  <!-- Progress Bar -->
+  <div class="absolute bottom-0 left-0 right-0 h-1 bg-black/20">
+    <div id="progressBar" class="h-full bg-green-500 transition-all duration-500 w-0"></div>
+  </div>
+
+  <!-- Dots -->
+  <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-3">
+    {slides.map((_, index) => (
+      <button 
+        class="w-2.5 h-2.5 rounded-full bg-white/50 hover:bg-white/80 transition-all dot-btn"
+        data-index={index}
+        aria-label={`Slayt ${index + 1}`}
+      ></button>
+    ))}
+  </div>
+</div>
+
+<style>
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(2rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slideUp {
+    animation: slideUp 0.8s ease-out forwards;
+  }
+</style>
+
+<script>
+  let slider: HTMLElement | null = null;
+  let slides: NodeListOf<Element>;
+  let prevBtn: HTMLButtonElement | null = null;
+  let nextBtn: HTMLButtonElement | null = null;
+  let dotBtns: NodeListOf<Element>;
+  let progressBar: HTMLElement | null = null;
+  
+  // DOM yüklendiğinde elementleri seç
+  document.addEventListener('DOMContentLoaded', () => {
+    slider = document.getElementById('slider');
+    slides = document.querySelectorAll('#slider > div');
+    prevBtn = document.getElementById('prevBtn') as HTMLButtonElement;
+    nextBtn = document.getElementById('nextBtn') as HTMLButtonElement;
+    dotBtns = document.querySelectorAll('.dot-btn');
+    progressBar = document.getElementById('progressBar');
+    
+    if (!slider || !prevBtn || !nextBtn || !progressBar) return;
+    
+    init();
+  });
+
+  let currentSlide = 0;
+  let isTransitioning = false;
+  let autoplayInterval: ReturnType<typeof setInterval>;
+  const AUTOPLAY_DELAY = 6000;
+
+  function init() {
+    if (!slider || !prevBtn || !nextBtn || !progressBar) return;
+
+    // Event Listeners
+    prevBtn.addEventListener('click', prevSlide);
+    nextBtn.addEventListener('click', nextSlide);
+
+    dotBtns.forEach((btn, index) => {
+      btn.addEventListener('click', () => {
+        if (isTransitioning || currentSlide === index) return;
+        currentSlide = index;
+        updateSlider();
+        resetAutoplay();
+      });
+    });
+
+    // Touch events
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    slider.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    slider.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      const diff = touchStartX - touchEndX;
+
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) {
+          nextSlide();
+        } else {
+          prevSlide();
+        }
+      }
+    }, { passive: true });
+
+    // Mouse hover events
+    const sliderContainer = slider.parentElement;
+    if (sliderContainer) {
+      sliderContainer.addEventListener('mouseenter', () => {
+        if (progressBar) progressBar.style.animationPlayState = 'paused';
+        clearInterval(autoplayInterval);
+      });
+
+      sliderContainer.addEventListener('mouseleave', () => {
+        resetAutoplay();
+      });
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        prevSlide();
+      } else if (e.key === 'ArrowRight') {
+        nextSlide();
+      }
+    });
+
+    // Initialize
+    updateSlider();
+    resetAutoplay();
+  }
+
+  function updateSlider() {
+    if (!slider || !progressBar || isTransitioning || !slides.length) return;
+    isTransitioning = true;
+    
+    // Slider pozisyonunu güncelle
+    slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+    
+    // Progress bar'ı sıfırla ve yeniden başlat
+    progressBar.style.width = '0%';
+    setTimeout(() => {
+      if (progressBar) progressBar.style.width = '100%';
+    }, 50);
+
+    // Dot butonlarını güncelle
+    dotBtns.forEach((btn, index) => {
+      btn.classList.toggle('bg-white', index === currentSlide);
+      btn.classList.toggle('bg-white/50', index !== currentSlide);
+    });
+
+    // Animasyonları sıfırla ve yeniden başlat
+    const currentSlideEl = slides[currentSlide];
+    if (currentSlideEl) {
+      const animations = currentSlideEl.querySelectorAll('.animate-slideUp');
+      animations.forEach((el) => {
+        el.classList.remove('animate-slideUp');
+        (el as HTMLElement).offsetWidth; // Force reflow
+        el.classList.add('animate-slideUp');
+      });
+    }
+
+    setTimeout(() => {
+      isTransitioning = false;
+    }, 700);
+  }
+
+  function nextSlide() {
+    if (isTransitioning) return;
+    currentSlide = (currentSlide + 1) % slides.length;
+    updateSlider();
+    resetAutoplay();
+  }
+
+  function prevSlide() {
+    if (isTransitioning) return;
+    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    updateSlider();
+    resetAutoplay();
+  }
+
+  function resetAutoplay() {
+    if (!progressBar) return;
+    clearInterval(autoplayInterval);
+    progressBar.style.width = '0%';
+    autoplayInterval = setInterval(nextSlide, AUTOPLAY_DELAY);
+    setTimeout(() => {
+      if (progressBar) progressBar.style.width = '100%';
+    }, 50);
+  }
+</script>

@@ -1,0 +1,108 @@
+---
+import Layout from './Layout.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  technical: CollectionEntry<'technical'>;
+}
+
+const { technical } = Astro.props;
+const { Content } = await technical.render();
+
+// SEO için schema
+const technicalSchema = {
+  "@context": "https://schema.org",
+  "@type": "TechnicalArticle",
+  "name": technical.data.title,
+  "description": technical.data.description,
+  "author": {
+    "@type": "Organization",
+    "name": "Karbon Güçlendirme"
+  }
+};
+---
+
+<Layout title={technical.data.title} description={technical.data.description}>
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json" set:html={JSON.stringify(technicalSchema)} />
+
+  <!-- Hero Section -->
+  <div class="bg-gray-50 border-b">
+    <div class="container mx-auto px-4 py-16">
+      <div class="max-w-3xl mx-auto">
+        <div class="inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium bg-green-50 text-green-600 mb-6">
+          <span class="mr-2">{technical.data.icon}</span>
+          Teknik Bilgi
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          {technical.data.title}
+        </h1>
+        <p class="text-xl text-gray-600 mb-8">
+          {technical.data.description}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- İçerik -->
+  <div class="container mx-auto px-4 py-12">
+    <div class="grid lg:grid-cols-3 gap-8">
+      <!-- Sol Taraf - Ana İçerik -->
+      <div class="lg:col-span-2">
+        <article class="prose prose-lg max-w-none">
+          <Content />
+        </article>
+
+        <!-- İlgili Konular -->
+        {technical.data.relatedTopics && (
+          <div class="mt-12 pt-12 border-t">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">İlgili Konular</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+              {technical.data.relatedTopics.map((topic) => (
+                <a href={topic.link} class="group">
+                  <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all">
+                    <h3 class="text-lg font-semibold text-gray-900 group-hover:text-green-600 mb-2">
+                      {topic.title}
+                    </h3>
+                    <p class="text-gray-600">{topic.description}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <!-- Sağ Taraf - Hızlı Bilgiler -->
+      <div class="lg:sticky lg:top-8" style="height: fit-content;">
+        <div class="bg-white p-8 rounded-xl border border-gray-100 shadow-sm">
+          <h2 class="text-xl font-bold text-gray-900 mb-6">Önemli Bilgiler</h2>
+          <div class="space-y-4">
+            {technical.data.keyPoints?.map((point) => (
+              <div class="flex items-start">
+                <svg class="w-5 h-5 text-green-500 mt-1 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span class="text-gray-700">{point}</span>
+              </div>
+            ))}
+          </div>
+
+          <!-- CTA -->
+          <div class="mt-8 pt-8 border-t">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Daha Fazla Bilgi İçin</h3>
+            <a 
+              href="/iletisim" 
+              class="flex items-center justify-center gap-2 w-full bg-green-600 text-white font-medium px-6 py-3 rounded-xl hover:bg-green-700 transition-all"
+            >
+              <span>Bize Ulaşın</span>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout> 

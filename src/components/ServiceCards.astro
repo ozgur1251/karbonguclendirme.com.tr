@@ -1,0 +1,51 @@
+---
+import { HOMEPAGE } from '../config/content';
+const { services } = HOMEPAGE;
+---
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+  {services.items.map((service, index) => (
+    <div class="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+      <div class="relative h-48 overflow-hidden">
+        <img 
+          src={service.image} 
+          alt={service.title} 
+          class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+          loading={index < 4 ? "eager" : "lazy"}
+          decoding="async"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+        <div class="absolute bottom-0 left-0 right-0 p-6">
+          <h3 class="text-xl font-bold text-white group-hover:text-green-300 transition-colors">
+            {service.title}
+          </h3>
+        </div>
+      </div>
+      
+      <div class="p-6">
+        <p class="text-gray-600 mb-6 line-clamp-3">
+          {service.description}
+        </p>
+        <div class="space-y-3 mb-6">
+          {service.features.map(feature => (
+            <div class="flex items-start">
+              <svg class="w-5 h-5 text-green-500 mt-1 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span class="text-gray-700">{feature}</span>
+            </div>
+          ))}
+        </div>
+        <a 
+          href={service.link} 
+          class="inline-flex items-center text-green-600 hover:text-green-700 font-medium group"
+        >
+          Detaylı Bilgi
+          <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  ))}
+</div> 

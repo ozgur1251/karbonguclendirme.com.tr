@@ -1,0 +1,108 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const technicalArticles = await getCollection('technical');
+
+// SEO için schema
+const technicalSchema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Teknik Bilgiler - Arc Karbon",
+  "description": "Karbon fiber güçlendirme sistemleri hakkında teknik bilgiler ve uygulama detayları",
+  "url": "https://arckarbon.com/teknik",
+  "hasPart": technicalArticles.map((article) => ({
+    "@type": "TechnicalArticle",
+    "name": article.data.title,
+    "description": article.data.description,
+    "url": `https://arckarbon.com/teknik/${article.slug}`
+  }))
+};
+---
+
+<Layout 
+  title="Teknik Bilgiler - Arc Karbon" 
+  description="Karbon fiber güçlendirme sistemleri hakkında teknik bilgiler ve uygulama detayları"
+>
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json" set:html={JSON.stringify(technicalSchema)} />
+
+  <!-- Hero Section -->
+  <div class="bg-gray-50 border-b">
+    <div class="container mx-auto px-4 py-16">
+      <div class="max-w-3xl mx-auto text-center">
+        <h1 class="text-4xl font-bold text-gray-900 mb-6">
+          Teknik Bilgiler
+        </h1>
+        <p class="text-xl text-gray-600">
+          Karbon fiber güçlendirme sistemleri hakkında detaylı teknik bilgiler ve uygulama yöntemleri
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Teknik Makaleler -->
+  <div class="container mx-auto px-4 py-16">
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {technicalArticles.map((article) => (
+        <a href={`/teknik/${article.slug}`} class="group">
+          <div class="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all">
+            <div class="p-6">
+              <div class="inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium bg-green-50 text-green-600 mb-4">
+                <span class="mr-2">{article.data.icon}</span>
+                Teknik Bilgi
+              </div>
+              <h2 class="text-xl font-bold text-gray-900 group-hover:text-green-600 transition-colors mb-3">
+                {article.data.title}
+              </h2>
+              <p class="text-gray-600 mb-6 line-clamp-3">
+                {article.data.description}
+              </p>
+              <div class="space-y-3">
+                {article.data.keyPoints.slice(0, 3).map((point) => (
+                  <div class="flex items-start">
+                    <svg class="w-5 h-5 text-green-500 mt-1 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span class="text-gray-700">{point}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+              <div class="flex items-center justify-between text-green-600 font-medium">
+                <span>Detaylı Bilgi</span>
+                <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="bg-gray-50 py-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl mx-auto text-center">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">
+          Daha Fazla Bilgi İçin
+        </h2>
+        <p class="text-xl text-gray-600 mb-8">
+          Projeniz için ücretsiz keşif ve danışmanlık hizmeti alın
+        </p>
+        <a 
+          href="/iletisim" 
+          class="inline-flex items-center justify-center px-8 py-4 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition-colors"
+        >
+          <span>Bize Ulaşın</span>
+          <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</Layout> 

@@ -1,0 +1,20 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import TechnicalLayout from '../../layouts/TechnicalLayout.astro';
+
+export async function getStaticPaths() {
+  const technicalArticles = await getCollection('technical');
+  return technicalArticles.map((technical) => ({
+    params: { slug: technical.slug },
+    props: { technical },
+  }));
+}
+
+interface Props {
+  technical: CollectionEntry<'technical'>;
+}
+
+const { technical } = Astro.props;
+---
+
+<TechnicalLayout technical={technical} /> 

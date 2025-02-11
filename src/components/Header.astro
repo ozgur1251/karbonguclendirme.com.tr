@@ -1,0 +1,30 @@
+---
+import { SITE } from '../config/site';
+import Topbar from './Topbar.astro';
+import MainMenu from './MainMenu.astro';
+import MobileMenu from './MobileMenu.astro';
+---
+
+<div slot="header">
+  <Topbar />
+  <div class="bg-white shadow-sm">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16 md:h-20">
+        <a href="/" class="text-2xl font-bold text-gray-800">
+          <img src="/images/logo.svg" alt={SITE.name} class="h-12 md:h-14 w-auto" />
+        </a>
+        
+        <div class="flex items-center space-x-4">
+          <MainMenu />
+          <a href="/contact" class="hidden md:inline-flex items-center px-6 py-2.5 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition-all duration-300 shadow-md hover:shadow-lg">
+            <span>İletişime Geç</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <MobileMenu />
+</div> 

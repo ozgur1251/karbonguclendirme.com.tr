@@ -1,0 +1,259 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { SITE } from '../../config/site';
+
+// Blog yazılarını al ve tarihe göre sırala
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => 
+  new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+// Sayfa başına gösterilecek yazı sayısı
+const ITEMS_PER_PAGE = 6;
+const INITIAL_POSTS = sortedPosts.slice(0, ITEMS_PER_PAGE);
+
+// SEO meta verileri
+const seoTitle = "Blog - Karbon Fiber Güçlendirme Teknikleri ve Güncel Bilgiler";
+const seoDescription = "Yapı güçlendirme, karbon fiber teknolojileri ve sektörel yenilikler hakkında uzman makaleler ve teknik bilgiler.";
+
+// Blog listesi için schema.org yapısı
+const blogListSchema = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": seoTitle,
+  "description": seoDescription,
+  "url": `${SITE.url}/blog`,
+  "publisher": {
+    "@type": "Organization",
+    "name": SITE.name,
+    "logo": {
+      "@type": "ImageObject",
+      "url": `${SITE.url}/images/logo.svg`
+    }
+  },
+  "blogPosts": INITIAL_POSTS.map((post: CollectionEntry<'blog'>) => ({
+    "@type": "BlogPosting",
+    "headline": post.data.title,
+    "description": post.data.excerpt,
+    "datePublished": post.data.date,
+    "image": post.data.image,
+    "url": `${SITE.url}/blog/${post.slug}`,
+    "author": {
+      "@type": "Person",
+      "name": post.data.author || SITE.author
+    }
+  }))
+};
+---
+
+<Layout 
+  title={seoTitle}
+  description={seoDescription}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(blogListSchema)} />
+  
+  <div class="bg-gray-50 py-20">
+    <div class="container mx-auto px-4">
+      <!-- Başlık Bölümü -->
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">Blog</h1>
+        <div class="w-20 h-1.5 bg-green-500 mx-auto rounded-full mb-8"></div>
+        <p class="text-gray-600">Karbon fiber güçlendirme ve yapısal çözümler hakkında güncel bilgiler</p>
+      </div>
+
+      <!-- Blog Yazıları Grid -->
+      <div id="blog-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {INITIAL_POSTS.map((post: CollectionEntry<'blog'>) => (
+          <article class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <a href={`/blog/${post.slug}`} class="block">
+              <div class="relative h-48 overflow-hidden">
+                <img 
+                  src={post.data.image} 
+                  alt={post.data.title}
+                  class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <div class="p-6">
+                <time datetime={post.data.date} class="text-sm text-gray-500 mb-2 block">
+                  {new Date(post.data.date).toLocaleDateString('tr-TR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </time>
+                <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-green-600 transition-colors">
+                  {post.data.title}
+                </h2>
+                <p class="text-gray-600 mb-4 line-clamp-2">
+                  {post.data.excerpt}
+                </p>
+                
+                <!-- Sosyal Medya Paylaşım Butonları -->
+                <div class="flex items-center justify-between">
+                  <span class="inline-flex items-center text-green-600 hover:text-green-700 font-medium">
+                    Devamını Oku
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                  </span>
+                  <div class="flex space-x-2">
+                    <button 
+                      class="text-blue-600 hover:text-blue-700"
+                      onclick={`window.open('https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`${SITE.url}/blog/${post.slug}`)}', '_blank')`}
+                      title="Facebook'ta Paylaş"
+                    >
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M18.77,7.46H14.5v-1.9c0-.9.6-1.1,1-1.1h3V.5h-4.33C10.24.5,9.5,3.44,9.5,5.32v2.15h-3v4h3v12h5v-12h3.85l.42-4Z"/>
+                      </svg>
+                    </button>
+                    <button 
+                      class="text-blue-400 hover:text-blue-500"
+                      onclick={`window.open('https://twitter.com/intent/tweet?url=${encodeURIComponent(`${SITE.url}/blog/${post.slug}`)}&text=${encodeURIComponent(post.data.title)}', '_blank')`}
+                      title="Twitter'da Paylaş"
+                    >
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.896-.959-2.173-1.559-3.591-1.559-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.722-.666 1.561-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.39 0-.779-.023-1.17-.067 2.189 1.394 4.768 2.209 7.557 2.209 9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63.961-.689 1.8-1.56 2.46-2.548l-.047-.02z"/>
+                      </svg>
+                    </button>
+                    <button 
+                      class="text-blue-700 hover:text-blue-800"
+                      onclick={`window.open('https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(`${SITE.url}/blog/${post.slug}`)}&title=${encodeURIComponent(post.data.title)}', '_blank')`}
+                      title="LinkedIn'de Paylaş"
+                    >
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                      </svg>
+                    </button>
+                    <button 
+                      class="text-green-600 hover:text-green-700"
+                      onclick={`window.open('https://api.whatsapp.com/send?text=${encodeURIComponent(`${post.data.title} ${SITE.url}/blog/${post.slug}`)}', '_blank')`}
+                      title="WhatsApp'ta Paylaş"
+                    >
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </article>
+        ))}
+      </div>
+
+      <!-- İlgili Yazılar -->
+      {INITIAL_POSTS.length > 0 && (
+        <div class="mt-16">
+          <h2 class="text-2xl font-bold text-gray-900 mb-8">İlgili Yazılar</h2>
+          <div class="grid md:grid-cols-3 gap-8">
+            {sortedPosts.slice(0, 3).map((post: CollectionEntry<'blog'>) => (
+              <a href={`/blog/${post.slug}`} class="group">
+                <div class="relative h-40 mb-4 overflow-hidden rounded-lg">
+                  <img 
+                    src={post.data.image} 
+                    alt={post.data.title}
+                    class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 group-hover:text-green-600 transition-colors">
+                  {post.data.title}
+                </h3>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <!-- Yükleniyor Göstergesi -->
+      <div id="loading" class="hidden text-center mt-8">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-500"></div>
+      </div>
+    </div>
+  </div>
+
+  <script define:vars={{ ITEMS_PER_PAGE, totalPosts: sortedPosts.length }}>
+    let currentPage = 1;
+    let loading = false;
+    const loadingElement = document.getElementById('loading');
+    const blogGrid = document.getElementById('blog-grid');
+
+    async function loadMorePosts() {
+      if (loading) return;
+      
+      const nextPage = currentPage + 1;
+      const start = currentPage * ITEMS_PER_PAGE;
+      const end = start + ITEMS_PER_PAGE;
+      
+      if (start >= totalPosts) return;
+      
+      loading = true;
+      loadingElement.classList.remove('hidden');
+
+      try {
+        const response = await fetch(`/api/posts?page=${nextPage}`);
+        const newPosts = await response.json();
+        
+        if (newPosts.length > 0) {
+          const postsHTML = newPosts.map(post => `
+            <article class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <a href="/blog/${post.slug}" class="block">
+                <div class="relative h-48 overflow-hidden">
+                  <img 
+                    src="${post.image}" 
+                    alt="${post.title}"
+                    class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <div class="p-6">
+                  <time datetime="${post.date}" class="text-sm text-gray-500 mb-2 block">
+                    ${new Date(post.date).toLocaleDateString('tr-TR', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </time>
+                  <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-green-600 transition-colors">
+                    ${post.title}
+                  </h2>
+                  <p class="text-gray-600 mb-4 line-clamp-2">
+                    ${post.excerpt}
+                  </p>
+                  <span class="inline-flex items-center text-green-600 hover:text-green-700 font-medium">
+                    Devamını Oku
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                  </span>
+                </div>
+              </a>
+            </article>
+          `).join('');
+          
+          blogGrid.insertAdjacentHTML('beforeend', postsHTML);
+          currentPage = nextPage;
+        }
+      } catch (error) {
+        console.error('Blog yazıları yüklenirken hata oluştu:', error);
+      } finally {
+        loading = false;
+        loadingElement.classList.add('hidden');
+      }
+    }
+
+    // Sonsuz kaydırma için Intersection Observer
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && !loading) {
+        loadMorePosts();
+      }
+    }, { rootMargin: '100px' });
+
+    observer.observe(loadingElement);
+  </script>
+</Layout> 

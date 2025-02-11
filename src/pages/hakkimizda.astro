@@ -1,0 +1,173 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { CONTACT } from '../config/content';
+
+const stats = [
+  { value: "15+", label: "Yıllık Tecrübe" },
+  { value: "1000+", label: "Tamamlanan Proje" },
+  { value: "50+", label: "Uzman Kadro" },
+  { value: "100%", label: "Müşteri Memnuniyeti" }
+];
+
+const team = [
+  {
+    name: "Ahmet Yılmaz",
+    role: "Genel Müdür",
+    image: "/images/team/team-1.webp"
+  },
+  {
+    name: "Mehmet Demir",
+    role: "Teknik Müdür",
+    image: "/images/team/team-2.webp"
+  },
+  {
+    name: "Ayşe Kaya",
+    role: "Proje Müdürü",
+    image: "/images/team/team-3.webp"
+  }
+];
+
+const certificates = [
+  { name: "ISO 9001:2015", description: "Kalite Yönetim Sistemi" },
+  { name: "ISO 14001:2015", description: "Çevre Yönetim Sistemi" },
+  { name: "OHSAS 18001", description: "İş Sağlığı ve Güvenliği" },
+  { name: "TSE", description: "Türk Standartları Uygunluk" }
+];
+
+// SEO için schema
+const companySchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Karbon Güçlendirme",
+  "description": "Yapı güçlendirme alanında uzman kuruluş",
+  "foundingDate": "2009",
+  "url": CONTACT.siteurl,
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Aksaray/İstanbul",
+    "addressCountry": "TR"
+  }
+};
+---
+
+<Layout title="Hakkımızda - Karbon Güçlendirme" description="15 yıllık tecrübemiz ve uzman kadromuzla yapı güçlendirme sektörünün öncü kuruluşu.">
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json" set:html={JSON.stringify(companySchema)} />
+
+  <!-- Hero Section -->
+  <div class="bg-gray-50 border-b">
+    <div class="container mx-auto px-4 py-16 md:py-24">
+      <div class="max-w-3xl mx-auto text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          Yapı Güçlendirmede Öncü Kuruluş
+        </h1>
+        <p class="text-xl text-gray-600 leading-relaxed">
+          2009 yılından bu yana, en son teknoloji ve yenilikçi çözümlerle binlerce projeye imza attık. Deneyimli ekibimiz ve kaliteli hizmet anlayışımızla, yapılarınızı geleceğe güvenle taşıyoruz.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- İstatistikler -->
+  <div class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        {stats.map(stat => (
+          <div class="text-center">
+            <div class="text-4xl md:text-5xl font-bold text-green-600 mb-2">{stat.value}</div>
+            <div class="text-gray-600">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Hikayemiz -->
+  <div class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <h2 class="text-3xl font-bold text-gray-900 mb-6">Hikayemiz</h2>
+          <div class="prose prose-lg text-gray-600">
+            <p>
+              Arc Karbon, 2009 yılında yapı güçlendirme sektöründe yenilikçi çözümler sunmak amacıyla kuruldu. Karbon fiber teknolojisinin Türkiye'deki öncülerinden olan firmamız, yıllar içinde binlerce başarılı projeye imza attı.
+            </p>
+            <p>
+              Müşteri memnuniyetini her zaman ön planda tutan yaklaşımımız ve alanında uzman teknik kadromuzla, sektörün güvenilir ismi haline geldik. ISO 9001:2015 kalite belgemiz ve diğer sertifikalarımızla, hizmet kalitemizi sürekli geliştiriyoruz.
+            </p>
+          </div>
+        </div>
+        <div class="relative">
+          <img 
+            src="https://arckarbonguclendirme.com/_astro/frp-guclendirme-nedir-8265-9120.3vMEH-9H_1qOQhL.webp" 
+            alt="Arc Karbon Ofis" 
+            class="rounded-2xl shadow-xl"
+          />
+          <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-lg">
+            <div class="text-4xl font-bold text-green-600 mb-1">15+</div>
+            <div class="text-gray-600">Yıllık Tecrübe</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ekibimiz -->
+  <div class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">Uzman Ekibimiz</h2>
+        <p class="text-xl text-gray-600">Alanında deneyimli ve uzman kadromuzla hizmetinizdeyiz</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+        {team.map(member => (
+          <div class="bg-gray-50 rounded-xl p-6 text-center">
+            <img 
+              src={member.image} 
+              alt={member.name}
+              class="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
+            />
+            <h3 class="text-xl font-bold text-gray-900 mb-1">{member.name}</h3>
+            <p class="text-gray-600">{member.role}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Belgelerimiz -->
+  <div class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">Kalite Belgelerimiz</h2>
+        <p class="text-xl text-gray-600">Uluslararası standartlarda hizmet kalitesi</p>
+      </div>
+      <div class="grid md:grid-cols-4 gap-6">
+        {certificates.map(cert => (
+          <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <h3 class="text-xl font-bold text-gray-900 mb-2">{cert.name}</h3>
+            <p class="text-gray-600">{cert.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="bg-green-600 py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold text-white mb-6">
+        Projeniz için Ücretsiz Keşif Alın
+      </h2>
+      <p class="text-green-100 mb-8 text-lg">
+        Uzman ekibimiz projenizi değerlendirip en uygun çözümü sunmak için hazır
+      </p>
+      <a 
+        href="/iletisim" 
+        class="inline-flex items-center justify-center px-8 py-3 bg-white text-green-600 font-medium rounded-xl hover:bg-green-50 transition-colors"
+      >
+        İletişime Geçin
+      </a>
+    </div>
+  </div>
+</Layout> 
