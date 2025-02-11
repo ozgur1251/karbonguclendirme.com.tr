@@ -162,8 +162,7 @@ export const NAVIGATION = {
         links: [
           { name: "SSS", path: "/sss" },
           { name: "Referanslar", path: "/referanslar" },
-          { name: "Sertifikalar", path: "/sertifikalar" },
-          { name: "Kariyer", path: "/kariyer" }
+          { name: "Hizmetlerimiz", path: "/hizmetler" },
         ]
       }
     ],
@@ -172,7 +171,6 @@ export const NAVIGATION = {
       links: [
         { name: "Gizlilik Politikası", path: "/privacy" },
         { name: "Kullanım Şartları", path: "/terms" },
-        { name: "KVKK", path: "/kvkk" }
       ]
     }
   }

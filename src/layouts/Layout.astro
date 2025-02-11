@@ -12,14 +12,24 @@ interface Props {
   description?: string;
   keywords?: string;
   canonical?: string;
+  ogImage?: string;
+  noindex?: boolean;
 }
 
-const { title, description, keywords, canonical } = Astro.props;
+const { 
+  title, 
+  description = SEO.description, 
+  keywords,
+  canonical = Astro.url.href,
+  ogImage = `${SITE.url}/images/og-image.jpg`,
+  noindex = false
+} = Astro.props;
 
-const schemaOrg = {
+// Schema.org Organization
+const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "Karbon Güçlendirme",
+  "name": SITE.name,
   "url": SITE.url,
   "logo": `${SITE.url}/images/logo.svg`,
   "description": SITE.description,
@@ -32,6 +42,25 @@ const schemaOrg = {
     "@type": "ContactPoint",
     "telephone": CONTACT.phone,
     "contactType": "customer service"
+  },
+  "sameAs": [
+    "https://facebook.com/karbonguclendirme",
+    "https://twitter.com/arcguclendirme",
+    "https://instagram.com/karbonguclendirme",
+    "https://youtube.com/@karbonguclendirme"
+  ]
+};
+
+// Schema.org WebSite
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": SITE.name,
+  "url": SITE.url,
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": `${SITE.url}/search?q={search_term_string}`,
+    "query-input": "required name=search_term_string"
   }
 };
 ---
@@ -40,37 +69,51 @@ const schemaOrg = {
 <html lang={SITE.defaultLanguage}>
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{title} - {SITE.name}</title>
     
     <!-- SEO Meta Tags -->
-    {description && <meta name="description" content={description} />}
+    <title>{title}</title>
+    <meta name="description" content={description} />
     {keywords && <meta name="keywords" content={keywords} />}
-    {canonical && <link rel="canonical" href={canonical} />}
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex,nofollow" />}
     
     <!-- Schema.org markup -->
-    <script type="application/ld+json" set:html={JSON.stringify(schemaOrg)} />
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
     
     <!-- Open Graph -->
-    <meta property="og:title" content={title} />
-    {description && <meta property="og:description" content={description} />}
     <meta property="og:type" content="website" />
-    {canonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="tr_TR" />
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content={SEO.twitter.site} />
-    <meta name="twitter:creator" content={SEO.twitter.creator} />
+    <meta name="twitter:creator" content={SEO.twitter.handle} />
     <meta name="twitter:title" content={title} />
-    {description && <meta name="twitter:description" content={description} />}
-    <meta name="twitter:image" content={`${SITE.url}/images/og-image.jpg`} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
     
-    <!-- Favicon and other links -->
-    {SEO.extend.link.map((link) => (
-      <link {...link} />
-    ))}
+    <!-- Additional Meta Tags -->
+    <meta name="author" content={SITE.name} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="format-detection" content="telephone=no" />
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   </head>
   <body class="min-h-screen flex flex-col">
     <Header />

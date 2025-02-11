@@ -1,6 +1,9 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import ServiceLayout from '../../layouts/ServiceLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { pageSEO } from '../../config/seo';
+import { SITE } from '../../config/site';
 
 export async function getStaticPaths() {
   const services = await getCollection('services');
@@ -15,6 +18,54 @@ interface Props {
 }
 
 const { service } = Astro.props;
+const { data } = service;
+
+const breadcrumbItems = [
+  { name: "Ana Sayfa", path: "/" },
+  { name: "Hizmetlerimiz", path: "/hizmetler" },
+  { name: data.title, path: `/hizmetler/${service.slug}`, current: true }
+];
+
+// Sayfa SEO bilgileri
+const seoData = {
+  title: `${data.title} | ARC Karbon Güçlendirme`,
+  description: data.description || pageSEO.services.description,
+  keywords: `${data.title}, karbon fiber güçlendirme, yapısal güçlendirme`,
+  canonical: `${SITE.url}/hizmetler/${service.slug}`,
+  ogImage: data.image || `${SITE.url}/images/og-image.jpg`
+};
+
+// Service Schema
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": data.title,
+  "description": data.description,
+  "provider": {
+    "@type": "Organization",
+    "name": SITE.name,
+    "url": SITE.url
+  },
+  "areaServed": {
+    "@type": "City",
+    "name": "İstanbul"
+  },
+  "image": data.image || `${SITE.url}/images/og-image.jpg`
+};
 ---
 
-<ServiceLayout service={service} /> 
+<ServiceLayout 
+  service={service}
+  title={seoData.title}
+  description={seoData.description}
+  keywords={seoData.keywords}
+  canonical={seoData.canonical}
+  ogImage={seoData.ogImage}
+>
+  <div slot="breadcrumb">
+    <Breadcrumb items={breadcrumbItems} />
+  </div>
+  <div slot="schema">
+    <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)} />
+  </div>
+</ServiceLayout> 

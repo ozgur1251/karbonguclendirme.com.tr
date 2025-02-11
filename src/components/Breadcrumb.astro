@@ -1,0 +1,50 @@
+---
+interface BreadcrumbItem {
+  name: string;
+  path: string;
+  current?: boolean;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+
+// Schema.org için breadcrumb yapılandırması
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": items.map((item, index) => ({
+    "@type": "ListItem",
+    "position": index + 1,
+    "item": {
+      "@id": `https://karbonguclendirme.com.tr${item.path}`,
+      "name": item.name
+    }
+  }))
+};
+---
+
+<nav class="flex" aria-label="Breadcrumb">
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <ol class="flex items-center space-x-2 text-sm text-gray-500">
+    {
+      items.map((item, index) => (
+        <li class="flex items-center">
+          {index > 0 && <span class="mx-2">/</span>}
+          {item.current ? (
+            <span class="text-gray-900" aria-current="page">{item.name}</span>
+          ) : (
+            <a
+              href={item.path}
+              class="hover:text-green-600 transition-colors"
+            >
+              {item.name}
+            </a>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav> 
