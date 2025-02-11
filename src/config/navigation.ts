@@ -116,11 +116,6 @@ export const NAVIGATION = {
         ]
       },
       {
-        name: "Projeler",
-        path: "/projects",
-        anchor: "projects"
-      },
-      {
         name: "Blog",
         path: "/blog",
         anchor: "blog"
@@ -138,26 +133,37 @@ export const NAVIGATION = {
       {
         title: "Hizmetlerimiz",
         links: [
-          { name: "Karbon Güçlendirme", path: "/hizmetler/karbon-guclendirme" },
-          { name: "Kiriş Güçlendirme", path: "/hizmetler/kiris-guclendirme" },
+          { name: "Karbon Fiber Güçlendirme", path: "/hizmetler/karbon-guclendirme" },
+          { name: "CFRP Güçlendirme", path: "/hizmetler/cfrp-guclendirme" },
+          { name: "FRP Güçlendirme", path: "/hizmetler/frp-guclendirme" },
+          { name: "Bina Güçlendirme", path: "/hizmetler/bina-guclendirme" }
+        ]
+      },
+      {
+        title: "Güçlendirme",
+        links: [
           { name: "Kolon Güçlendirme", path: "/hizmetler/kolon-guclendirme" },
+          { name: "Kiriş Güçlendirme", path: "/hizmetler/kiris-guclendirme" },
           { name: "Döşeme Güçlendirme", path: "/hizmetler/doseme-guclendirme" },
-          { name: "Zemin Güçlendirme  ", path: "/hizmetler/zemin-guclendirme" }
+          { name: "Perde Güçlendirme", path: "/hizmetler/perde-guclendirme" }
         ]
       },
       {
         title: "Kurumsal",
         links: [
           { name: "Hakkımızda", path: "/hakkimizda" },
-          { name: "İletişim", path: "/iletisim" }
+          { name: "Blog", path: "/blog" },
+          { name: "İletişim", path: "/iletisim" },
+          { name: "Teknik Bilgiler", path: "/teknik" }
         ]
       },
       {
-        title: "Projeler",
+        title: "Faydalı Bilgiler",
         links: [
-          { name: "Tamamlanan Projeler", path: "/projects/completed" },
-          { name: "Devam Eden Projeler", path: "/projects/ongoing" },
-          { name: "Referanslar", path: "/references" }
+          { name: "SSS", path: "/sss" },
+          { name: "Referanslar", path: "/referanslar" },
+          { name: "Sertifikalar", path: "/sertifikalar" },
+          { name: "Kariyer", path: "/kariyer" }
         ]
       }
     ],

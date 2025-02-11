@@ -8,16 +8,13 @@ import WhatsAppButton from '../components/WhatsAppButton.astro';
 import { CONTACT } from '../config/content';
 
 interface Props {
-  title?: string;
+  title: string;
   description?: string;
-  image?: string;
+  keywords?: string;
+  canonical?: string;
 }
 
-const {
-  title = SITE.title,
-  description = SITE.description,
-  image = '/og-image.jpg',
-} = Astro.props;
+const { title, description, keywords, canonical } = Astro.props;
 
 const schemaOrg = {
   "@context": "https://schema.org",
@@ -47,30 +44,27 @@ const schemaOrg = {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title} - {SITE.name}</title>
-    <meta name="description" content={description} />
     
     <!-- SEO Meta Tags -->
-    {SEO.extend.meta.map((meta) => (
-      <meta {...meta} />
-    ))}
+    {description && <meta name="description" content={description} />}
+    {keywords && <meta name="keywords" content={keywords} />}
+    {canonical && <link rel="canonical" href={canonical} />}
     
     <!-- Schema.org markup -->
     <script type="application/ld+json" set:html={JSON.stringify(schemaOrg)} />
     
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={image} />
-    <meta property="og:type" content={SEO.openGraph.basic.type} />
-    <meta property="og:site_name" content={SITE.name} />
-    <meta property="og:url" content={SITE.url} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:type" content="website" />
+    {canonical && <meta property="og:url" content={canonical} />}
     
     <!-- Twitter -->
-    <meta name="twitter:card" content={SEO.twitter.card} />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content={SEO.twitter.site} />
     <meta name="twitter:creator" content={SEO.twitter.creator} />
     <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
+    {description && <meta name="twitter:description" content={description} />}
     <meta name="twitter:image" content={`${SITE.url}/images/og-image.jpg`} />
     
     <!-- Favicon and other links -->

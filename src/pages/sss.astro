@@ -1,0 +1,161 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const faqs = [
+  {
+    question: "Karbon fiber güçlendirme nedir?",
+    answer: "Karbon fiber güçlendirme, yapıların taşıyıcı sistemlerini güçlendirmek için kullanılan modern bir yöntemdir. Yüksek dayanımlı karbon fiber malzemeler kullanılarak binaların deprem dayanımı artırılır ve yapısal kapasitesi yükseltilir."
+  },
+  {
+    question: "Binamın güçlendirmeye ihtiyacı olup olmadığını nasıl anlarım?",
+    answer: "Binanızda çatlaklar, kolonlarda hasar, döşemelerde sarkma, duvarlarda ayrılma gibi belirtiler varsa güçlendirme gerekebilir. Kesin değerlendirme için uzman ekibimiz ücretsiz keşif hizmeti sunmaktadır."
+  },
+  {
+    question: "Güçlendirme işlemi ne kadar sürer?",
+    answer: "Güçlendirme süresi, projenin kapsamına ve yapının durumuna göre değişiklik gösterir. Ortalama bir konut için bu süre 2-4 hafta arasında değişebilir. Proje başlangıcında net bir zaman planı sunulmaktadır."
+  },
+  {
+    question: "Güçlendirme sırasında binada yaşamaya devam edebilir miyiz?",
+    answer: "Güçlendirme çalışmaları sırasında genellikle binada yaşam devam edebilir. Ancak çalışmanın türüne ve yoğunluğuna bağlı olarak, bazı alanlarda geçici kısıtlamalar olabilir. Bu durumlar proje başlangıcında detaylı olarak planlanır."
+  },
+  {
+    question: "Karbon fiber güçlendirmenin avantajları nelerdir?",
+    answer: "Karbon fiber güçlendirme hafif, dayanıklı ve uzun ömürlüdür. Uygulama süresi kısadır, bina estetiğini bozmaz ve minimum alan kaybı yaratır. Ayrıca betonarme güçlendirmeye göre daha ekonomik bir çözüm sunar."
+  },
+  {
+    question: "Güçlendirme için gerekli izinler nelerdir?",
+    answer: "Güçlendirme projesi için belediyeden yapı ruhsatı ve gerekli izinlerin alınması gerekmektedir. ARC Karbon olarak tüm izin süreçlerini sizin adınıza yönetiyoruz."
+  },
+  {
+    question: "Güçlendirme garantisi var mı?",
+    answer: "Evet, tüm güçlendirme uygulamalarımız 10 yıl garantilidir. Kullandığımız malzemeler uluslararası standartlara uygun olup, işçilik ve uygulama kalitemiz sürekli denetlenmektedir."
+  },
+  {
+    question: "Maliyet nasıl belirlenir?",
+    answer: "Güçlendirme maliyeti, yapının durumu, güçlendirme kapsamı ve kullanılacak malzeme miktarına göre değişir. Ücretsiz keşif sonrası detaylı fiyat analizi sunulmaktadır."
+  }
+];
+
+// SEO Meta Data
+const seoData = {
+  title: "Sıkça Sorulan Sorular - Karbon Fiber Güçlendirme | ARC Karbon",
+  description: "Karbon fiber güçlendirme, yapısal güçlendirme ve bina güçlendirme hakkında sıkça sorulan sorular ve uzman cevapları. Ücretsiz keşif için hemen arayın.",
+  keywords: "karbon fiber güçlendirme, yapısal güçlendirme, bina güçlendirme, sıkça sorulan sorular, güçlendirme maliyeti, güçlendirme süresi",
+  canonical: "https://karbonguclendirme.com.tr/sss"
+};
+
+// FAQ Schema
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map(faq => ({
+    "@type": "Question",
+    "name": faq.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.answer
+    }
+  }))
+};
+---
+
+<Layout 
+  title={seoData.title}
+  description={seoData.description}
+  keywords={seoData.keywords}
+  canonical={seoData.canonical}
+>
+  <!-- Schema Markup -->
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <div class="bg-gradient-to-b from-green-50 to-white">
+    <!-- Hero Section -->
+    <div class="container mx-auto px-4 py-12 md:py-16">
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-4">
+        Sıkça Sorulan Sorular
+      </h1>
+      <p class="text-gray-600 text-center max-w-2xl mx-auto mb-12">
+        Karbon fiber güçlendirme ve yapısal güçlendirme hakkında merak ettiğiniz tüm soruların cevapları burada.
+      </p>
+
+      <!-- Breadcrumb -->
+      <nav class="flex justify-center text-sm text-gray-500 mb-8">
+        <ol class="flex items-center space-x-2">
+          <li>
+            <a href="/" class="hover:text-green-600 transition-colors">Ana Sayfa</a>
+          </li>
+          <li>
+            <span class="mx-2">/</span>
+          </li>
+          <li>
+            <span class="text-gray-900">Sıkça Sorulan Sorular</span>
+          </li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <!-- FAQ Section -->
+  <div class="container mx-auto px-4 py-12">
+    <div class="max-w-3xl mx-auto">
+      <div class="space-y-6">
+        {faqs.map((faq, index) => (
+          <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+            <details class="group">
+              <summary class="flex items-center justify-between gap-3 px-6 py-4 cursor-pointer">
+                <h3 class="text-gray-900 font-medium pr-4">
+                  {faq.question}
+                </h3>
+                <span class="text-green-600 group-open:rotate-180 transition-transform">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
+              </summary>
+              <div class="px-6 pb-4 text-gray-600">
+                <p class="text-sm leading-relaxed">
+                  {faq.answer}
+                </p>
+              </div>
+            </details>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="mt-16 text-center">
+      <div class="bg-green-50 rounded-2xl p-8 max-w-3xl mx-auto">
+        <h2 class="text-2xl font-semibold text-gray-900 mb-4">
+          Sorunuzu bulamadınız mı?
+        </h2>
+        <p class="text-gray-600 mb-6">
+          Uzman ekibimiz tüm sorularınızı yanıtlamak için hazır. Hemen iletişime geçin.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a 
+            href="/iletisim" 
+            class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors"
+          >
+            İletişime Geçin
+          </a>
+          <a 
+            href="tel:+905427483855" 
+            class="inline-flex items-center justify-center px-6 py-3 border border-green-600 text-base font-medium rounded-md text-green-600 bg-white hover:bg-green-50 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+            Hemen Arayın
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  details summary::-webkit-details-marker {
+    display: none;
+  }
+</style> 
